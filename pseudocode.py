@@ -3,15 +3,25 @@
 from pandas import DataFrame, read_csv
 import pandas as pd
 
-# Import the lists of the publications, they are as supplemental material online. -> This is giving me more work than I imagine, I still dont have all the lists
+# Import the lists of the publications, they are as supplemental material online.
 
-#I will have to organize the different lists to have the same order of columns and format. I probably will use Regular expressions in sheel ("grep") to do this.
+# Organize the different lists to have the same order of columns and format.
+# Hilliard et al 2012 processed in R (document:Organizing_tables.R)
+# eliminate duplicates within each file
+Hilliard = pd.read_csv("Probes_vocalization_Hilliardetal2012_GeneInfo.csv", header = 0)
+Hilliard.duplicated(["geneSymbol"]) # check if there are duplicates
+SingleGenes = Hilliard.drop_duplicates(["geneSymbol"]) # the output is all your table without duplicates
+len(SingleGenes)# 2057 single genes! As expected :) 
+SingleGenes.to_csv('Hilliard_Noduplicates.csv', index=False, header=True)
 
-#Because people give different names to genes, I will have to blast each gene and replace the name given by the authors for the names in GenBank
-# in the terminal: 
-sudo apt-get install ncbi-blast+
-#to search genbank for a sequence, but for only a single species:
-blastn -db nt -query nt.fsa -entrez_query "Taeniopygia guttata[Organism]" -out results.out -remote
+
+
+## Get the whole sequence of genes and gene names from ensembl.org
+# Ensembl makes their data available via MySQL servers, that can be accessed by cogent.db.ensembl module in PyCogent. PyCogent is a software library for genomic biology) that uses Python language. This program instalation have several requirements, including for querying databases, the script used to install this and other softwares is in the document "Pycogent_install.sh".
+
+######
+import numpy #python module used for speeding up matrix computations
+#####
 
 
 ## Join the lists and produce one final document with unique genes.
@@ -34,22 +44,4 @@ final = concatenated.drop_duplicates([3])
 final.to_csv('Noduplicates.csv', index=False, header=False) # to write a file with the final number of genes # names=['x','y']
 
 # Check data type of columns: list1[1].dtype
-
-############## I first tried to make one function to compare and produce one list.. but not very successful.
-
-def function (list1,list2)
-final = []
-for row1 in list1[1]:
-	for row2 in list2[1]:
-		if row1 == row2:
-			print("a")
-			break
-		else:
-			final.append(row2)
-			print("b")
-	final.append(row1)
-return final
-
-# to sort: .sort(['coluna'], ascending=False)
-
 
