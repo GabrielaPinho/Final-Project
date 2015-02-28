@@ -1,9 +1,0 @@
-##My idea is to write a program to build, from three independent lists of genes associated with vocal-learning, one without duplicates. The lists contain approximately 2,700, 500 and 2,000 genes.
-
-#First I will have to import the lists in the publications, they are published online.
-
-#I will have to organize the different lists to have the same order of columns and format. I probably will use Regular expressions to do this.
-
-#Because people give different names to genes, I will have to blast each gene and replace the name given by the authors for the names in GenBank
-
-# Then I will write a command to compare the lists and produce one final document with unique genes.
