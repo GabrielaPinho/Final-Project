@@ -17,21 +17,21 @@ head(Subset_tab_hil) # conlumn names: "probeID","cloneID","sequence","geneSymbol
 length(Subset_tab_hil[,1])
 
 class(Subset_tab_hil[,10])
-# Select only the genes that are regulated by singing.
-singing <- Subset_tab_hil[Subset_tab_hil$q.GS.singing.X < 0.05 & Subset_tab_hil$q.GS.singing.X != "NA",]
-motifs <- Subset_tab_hil[Subset_tab_hil$q.GS.motifs.X < 0.05 & Subset_tab_hil$q.GS.motifs.X != "NA",]
-length(Final_table_hil2[,1]) # 2658 right! -> same number described in the paper
-length(Final_table_hil3[,1]) # 3706 -> same number described in the paper
+## Select only the genes that are regulated by singing.
+#singing <- Subset_tab_hil[Subset_tab_hil$q.GS.singing.X < 0.05 & Subset_tab_hil$q.GS.singing.X != "NA",]
+#motifs <- Subset_tab_hil[Subset_tab_hil$q.GS.motifs.X < 0.05 & Subset_tab_hil$q.GS.motifs.X != "NA",]
+#length(singing[,1]) # 2658 right! -> same number described in the paper
+#length(motifs[,1]) # 3706 -> same number described in the paper
 
 Final_table_hil <- Subset_tab_hil[Subset_tab_hil$q.GS.singing.X < 0.05 | Subset_tab_hil$q.GS.motifs.X < 0.05,]
 length(Final_table_hil[,1]) # 4161 probes, which I expect to represent 2057 genes regulated by singing
-tail(Final_table_hil)
-head(Final_table_hil)
+#tail(Final_table_hil)
+#head(Final_table_hil)
 
 write.table(Final_table_hil, file ="Probes_vocalization_Hilliardetal2012_extended.csv", sep=",", row.names = FALSE, col.names = TRUE)
 
-Final_table_hil_main <- Final_table_hil[,c("probeID","cloneID","sequence","geneSymbol","geneName")]
+Final_table_hil_main <- Final_table_hil[,c("geneSymbol")]
 head (Final_table_hil_main)
-write.table(Final_table_hil_main, file ="Probes_vocalization_Hilliardetal2012_GeneInfo.csv", sep=",", row.names = FALSE, col.names = TRUE) # this table will be used to compare with tables from other studies
+write.table(Final_table_hil_main, file ="Probes_vocalization_Hilliardetal2012_GeneInfo.csv", sep=",", row.names = FALSE, col.names = FALSE) # this table will be used to compare with tables from other studies
 
 #232+693+1132=2057
