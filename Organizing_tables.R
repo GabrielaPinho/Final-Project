@@ -30,8 +30,10 @@ length(Final_table_hil[,1]) # 4161 probes, which I expect to represent 2057 gene
 
 write.table(Final_table_hil, file ="Probes_vocalization_Hilliardetal2012_extended.csv", sep=",", row.names = FALSE, col.names = TRUE)
 
-Final_table_hil_main <- Final_table_hil[,c("geneSymbol")]
-head (Final_table_hil_main)
-write.table(Final_table_hil_main, file ="Probes_vocalization_Hilliardetal2012_GeneInfo.csv", sep=",", row.names = FALSE, col.names = FALSE) # this table will be used to compare with tables from other studies
+Final_table_hil_main <- Final_table_hil[,c("geneSymbol","cloneID")]
+head (Final_table_hil_main[1])
+colnames(Final_table_hil_main)[1] <- "GeneInfo"
+
+write.table(Final_table_hil_main[1], file ="Probes_vocalization_Hilliardetal2012_GeneInfo.csv", sep=",", row.names = FALSE) # this table will be used to compare with tables from other studies
 
 #232+693+1132=2057
