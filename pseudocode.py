@@ -7,7 +7,6 @@ import pandas as pd
 
 # Organize the different lists to have the same order of columns and format.
 	# Hilliard et al 2012 had more information than I needed, so the processing was a little longer. It was processed in R(document:Organizing_tables.R)
-Hilliard = pd.read_csv("Probes_vocalization_Hilliardetal2012_GeneInfo.csv", header = 0)
 	# Zhang et al 2014 has two tables of interest (one with 227 and the other 278 genes) that have different organization. So I had to organize it:
 Zhang1 = pd.read_csv("Zhang-Table_S28.txt", delim_whitespace=True, header = 1)
 Zhang1 = Zhang1.rename(columns={"GeneSymbol": "GeneInfo"})
@@ -40,7 +39,6 @@ print Species # great! Zebra finch is included! (Common Name:Zebra finch, Specie
 run function_get_geneseq.py
 # some gene IDs came with the prefix "SYM", I removed it with regular expressions using the find/replace in gedit (find:SYM(ENST[A-Z 0-9]*) replace: \1)
 
-#Noduplicates = pd.read_csv("NoDuplicates_final.csv", header = 0)
 get_geneseq("NoDuplicates_final.csv", "Run1", "GeneInfo", species= "taeniopygia_guttata", Rel =78)
 
 # To check for the errors
@@ -48,27 +46,28 @@ GeneSeq1 = pd.read_csv("Run1.csv", header = 0)
 # from 10724 genes, only 1174 had erros
 
 # To find the gene symbols or IDs without sequences:
-error1 = GeneSeq1[GeneSeq1["StableID"] == "No_ID"]
-error1["GeneInfo"].to_csv("error1.csv", index=False, header = True)
-# Ran the same function again with the genes that I didnt find sequences in the first time. Got another 15 sequences 
-get_geneseq("error1.csv", "Run2", "GeneInfo", species= "taeniopygia_guttata", Rel =78)
-#some gene IDs where described in the human genome:
+No_seq1 = GeneSeq1[GeneSeq1["StableID"] == "No_ID"]
+No_seq1["GeneInfo"].to_csv("No_seq1.csv", index=False, header = True)
+# Ran the same function again with the genes that I didnt find sequences in the first time. Got another 15 sequences, which indicates that there is a problem with the connection. 
+get_geneseq("No_seq1.csv", "Run2", "GeneInfo", species= "taeniopygia_guttata", Rel =78)
+#some gene IDs were described in the human genome:
 GeneSeq2 = pd.read_csv("Run2.csv", header = 0)
-error2 = GeneSeq2[GeneSeq2["StableID"] == "No_ID"]
-error2["GeneInfo"].to_csv("error2.csv", index=False, header = True)
+No_seq2 = GeneSeq2[GeneSeq2["StableID"] == "No_ID"]
+No_seq2["GeneInfo"].to_csv("No_seq2.csv", index=False, header = True)
 
-get_geneseq("error2.csv", "Run3", "GeneInfo", species = "homo_sapiens", Rel =79)
+get_geneseq("No_seq2.csv", "Run3", "GeneInfo", species = "homo_sapiens", Rel =79) # same function but with the human genome
 
-#only 348 genes have no sequnces now, I tried to run using the chicken genome too
+#only 348 genes have no sequences now
 
-#I clean this data for symbols that clearly were not genes (17 cases of dates in the format "12-April", were easily removed with regular expressions), genesIDs starting with "LOC" were removed (using LOC[0-9]*\n in gedit), as their function are not well defined and there is a possibility of being non coding areas. There were 206 LOC genes. 
-#Some problems came for the symbols described by Whitney et al 2014, in this table they also put the gene IDs, so I retrieved them using: 
-Whitney = pd.read_csv("Whitney_TableS4.csv", header = 2)
+#I removed the items from the column "GeneInfo" that clearly were not genes (17 cases of dates in the format "12-April", were easily removed with regular expressions). GenesIDs starting with "LOC" were removed (using LOC[0-9]*\n in gedit), as their function are not well defined and there is a possibility of being non coding areas. There were 206 LOC genes. 
+#I found some problems with the symbols described by Whitney et al 2014. In this table they also put the gene IDs, so had to use  I retrieved them using: 
+
+Whitney = pd.read_csv("Whitney_TableS4.csv", header = 2) # Whitney_TableS4.csv is the table i used to select the gene symbles initially (begining of the code)
 
 GeneSeq3 = pd.read_csv("Run3.csv", header = 0)
-error3 = GeneSeq3[GeneSeq3["StableID"] == "No_ID"]
-error3["GeneInfo"].to_csv("error3.csv", index=False, header = True)
-Symbol = pd.read_csv("error3.csv", header = 0)
+No_seq3 = GeneSeq3[GeneSeq3["StableID"] == "No_ID"]
+No_seq3["GeneInfo"].to_csv("No_seq3.csv", index=False, header = True)
+Symbol = pd.read_csv("No_seq3.csv", header = 0)
 
 XP = []
 for i in range(len(Symbol)):
@@ -81,7 +80,7 @@ XP_symbols_ID.to_csv("XP_symbols_ID.csv", index=False, header = True)
 get_geneseq("XP_symbols_ID.csv", "Run4", "ENSEMBL ID", species= "taeniopygia_guttata", Rel =78)
 
 # I also used the ckicken genome, but it added only 3 sequences to my table
-get_geneseq("error3.csv", "Run5", "GeneInfo", species = "gallus_gallus", Rel =79)
+get_geneseq("No_seq3.csv", "Run5", "GeneInfo", species = "gallus_gallus", Rel =79)
 
 # All ran okay. Now I need to concatenate the results from the different runs
 def get_finaltable (imput_list_tables):
@@ -91,33 +90,16 @@ def get_finaltable (imput_list_tables):
         Seq = read[read["StableID"] != "No_ID"]
         Final_table = Final_table.append(Seq)
     seq = Final_table[["StableID", "DNAseq"]]
-    seq.to_csv("Sequeces.csv", index=False, header = True)
-    get_uniqueGenes ("Sequeces.csv", "Final_table", "StableID")
+    seq.to_csv("Sequences.csv", index=False, header = True)
+    get_uniqueGenes ("Sequences.csv", "Final_table", "StableID")
     print "Done!"
 
 allruns = glob.glob("Run[1-5].csv")
 get_finaltable (allruns, "Final_table")
 #output: Only one table was analyzed. Initial length the table: 11633. Unique genes in the list: 9849. "Done!"
+
 # Only 46 genes remained without sequences (less than 1%). One example of a gene that didnt work is "ZGC:113518", they call it a synonymous name, and I did not find a way to get the gene ID or symbol from it. Also, IDs like "ENSGALT00000005719" are of transcripts, I also did not find a way to solve those (however I am sure I will find after some more digging). Others could not be found even searching manually in the website, which I think are typos or names not related with genes (wrongly selected by my code).
 
 #To represent graphically my data, I
 
-#####
-#join the tables
-a = [Seq1, Seq2, Seq3]
-Final_table = pandas.concat(a)
-
-
-#### Just some notes for myself here
-#join the lists
-a = [list1, list2, list3]
-concatenated = pandas.concat(a)
-
-# to check if there are duplicates into the lists
-concatenated.duplicated([3])
-#or list1.groupby(list1[1]).agg([len])
-
-final.to_csv('Noduplicates.csv', index=False, header=False) # to write a file with the final number of genes # names=['x','y']
-
-# Check data type of columns: list1[1].dtype
 
