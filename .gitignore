@@ -35,3 +35,15 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Gabi ignore #
+######################
+.Rhistory
+.~lock*
+LEMBRETE.txt
+*.csv~
+adicionais/
+*.py~
+error.csv
+presentation/
+teste/
