@@ -26,11 +26,3 @@ def get_uniqueGenes (alltables, name_output_table, name_column):
     Final_list_noduplicates.to_csv('{}.csv'.format(name_output_table), index = False) # index=True would write the name of the rows
     
 
-### my notes during de development.. not important
-# a = open("S_version.csv").readlines()
-#10726
-# len 2056
-#12820
-        #newtable[] = NoNA
-        #for line in range(0,len(NoNA)+1):
-#.loc[line,0])
