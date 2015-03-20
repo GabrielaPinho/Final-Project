@@ -46,39 +46,3 @@ def get_geneseq (input_table, name_output_table, name_column, species, Rel, head
     table.to_csv('{}.csv'.format(name_output_table), index=False, header=True)
     print ("Done!")
 
-
-#### My notes... not important to you :)
-
-#            if str(GeneralInfo) == '{"error":"page not found. Please check your uri and refer to our documentation http://rest.ensembl.org/"}'
-#                Seq.append(str(GeneralInfo))
-#                StableID.append("error")
-
-
-#Human = Genome(Species='Human', Release=67, account=None)
-#Hilliard = pd.read_csv("Hilliard_Noduplicates.csv", header = 0)
-#Table1 = pd.read_csv("Test.csv", header = 0)
-
-#get_geneseq(Table1, "Table1_final1")
-#input_table = Hilliard
-#name_output_table = "Hilliard_final"
-
-#out: [{u'type': u'gene', u'id': u'ENSG00000139618'}, {u'type': u'gene', u'id': u'LRG_293'}]
-#GeneSymbol = "NTRK2"
-
-
-#ntrk2 = Zebra.getGeneByStableId(StableId='ENSTGUG00000003077')
-#ntrk2 = Human.getGeneByStableId(StableId= 'ENSG00000148053')
-#ntrk2.Seq
-
-####
-#genes = Zebra.getGenesMatching(Symbol='NTRK2') # this is a search for a gene based on the genesymbol (returns a matching object)
-#genesH = Human.getGenesMatching(Symbol='NTRK2')
-
-
-#genes.Symbol
-#for gene in genes: # it let you interate in the 
-#     if gene.Symbol.lower() == 'ntrk2':
-#         break
-
-
-
