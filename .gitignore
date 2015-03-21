@@ -11,13 +11,10 @@
 ############
 # it's better to unpack these files and commit the raw source
 # git has its own built in compression methods
-*.7z
 *.dmg
-*.gz
 *.iso
 *.jar
 *.rar
-*.tar
 *.zip
 
 # Logs and databases #
@@ -47,3 +44,22 @@ adicionais/
 error.csv
 presentation/
 teste/
+.git.bfg-report/
+Final_table.csv
+No_seq1.csv
+No_seq2.csv
+No_seq3.csv
+Probes_vocalization_Hilliardetal2012_GeneInfo.csv
+README.html
+Run2.csv
+Run3.csv
+Run4.csv
+Run5.csv
+Sequeces.csv
+Whitney_GeneInfo.csv
+Whitney_TableS4.csv
+XP_symbols_ID.csv
+Zhang1_GeneInfo.csv
+Zhang2_GeneInfo.csv
+data/
+graph/
