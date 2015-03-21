@@ -6,19 +6,19 @@ import pandas as pd
 
 def get_uniqueGenes (alltables, name_output_table, name_column):
     Final_list = pd.DataFrame() # creates an empty Dataframe
-    Number_genes_per_table = []
+    Number_genes_per_table = [] # creates an empty list
     Initial_size = []
     if type(alltables) == str: # if only one table was used as input
         table = pd.read_csv(alltables, header = 0)
-        Final_list_noduplicates = table.drop_duplicates([name_column]).dropna()
+        Final_list_noduplicates = table.drop_duplicates([name_column]).dropna() # delete lines with duplicates or with NAs
         print "Only one table was analyzed. Initial length the table: " + str(len(table[name_column])) + ". Unique genes in the list: " + str(len(Final_list_noduplicates)) + "."
 
     if type(alltables) != str: # if several tables are being compared and analyzed
         for table in alltables:
             table = pd.read_csv(table, header = 0)
-            Initial_size.append(len(table[name_column]))
+            Initial_size.append(len(table[name_column])) # saves the initial size of each table
             SingleGenes = table.drop_duplicates([name_column]).dropna() # the output is all your table without duplicates
-            Number_genes_per_table.append(len(SingleGenes))
+            Number_genes_per_table.append(len(SingleGenes)) #saves the number of unique genes per table
             Final_list = Final_list.append(SingleGenes)
         Final_list_noduplicates = Final_list.drop_duplicates([name_column]) # to exclude genes repeated among lists    
         print "Analyzed tables: "+ str(alltables) +". Initial lengths of tables: " + str(Initial_size) + ". Unique genes per list: " + str(Number_genes_per_table) + ". Size of the final list is: "+ str(len(Final_list_noduplicates)) + "."
