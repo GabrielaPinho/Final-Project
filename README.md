@@ -64,12 +64,16 @@ run function_get_uniqueGenes.py
 
 import glob
 alltables = glob.glob("*.csv") # it selects all the four tables
-get_uniqueGenes (alltables, "NoDuplicates_final", "GeneInfo") # run the function with those tables, detailed explanation about this function can be found in the file
+get_uniqueGenes (alltables, "NoDuplicates_final", "GeneInfo") 
+# run the function with those tables, detailed explanation about this function can be found in the file
 
-# output: Analyzed tables: ['Probes_vocalization_Hilliardetal2012_GeneInfo.csv', 'Zhang1_GeneInfo.csv', 'Whitney_GeneInfo.csv', 'Zhang2_GeneInfo.csv']. Initial lengths of tables: [4161, 227, 24498, 331]. Unique genes per list: [2056, 227, 10253, 284]. Size of the final list is: 10726.
+# output: Analyzed tables: ['Probes_vocalization_Hilliardetal2012_GeneInfo.csv', 'Zhang1_GeneInfo.csv', 
+#'Whitney_GeneInfo.csv', 'Zhang2_GeneInfo.csv']. Initial lengths of tables: [4161, 227, 24498, 331]. Unique genes per list: 
+#[2056, 227, 10253, 284]. Size of the final list is: 10726.
 ```
 
 The file **NoDuplicates_final.csv** was generated. It contains a column (named "GeneInfo") without duplicates and containing gene symbols or IDs, depending on what was made available by the authors. This file is also available in the repository.
+
 ---
 
 ## Get the whole sequence of genes from ensembl.org
@@ -150,7 +154,7 @@ XP_symbols_ID.to_csv("XP_symbols_ID.csv", index=False, header = True) #writing t
 get_geneseq("XP_symbols_ID.csv", "Run4", "ENSEMBL ID", species= "taeniopygia_guttata", Rel =78) # all gene IDs had a gene sequence, it worked very well
 ```
 
-I also used the ckicken genome, but it added only 3 sequences to my table.
+I also used the chicken genome, but it added only 3 sequences to my table.
 
 ```python
 get_geneseq("No_seq3.csv", "Run5", "GeneInfo", species = "gallus_gallus", Rel =79)
@@ -181,3 +185,62 @@ get_finaltable (allruns, "Final_table")
 
 Only 46 genes remained without sequences (less than 1%). One example of a gene that didnt work is "ZGC:113518". Looking in Ensembl database, they call it a synonymous name, and I did not find a way to get the gene ID or symbol from it. Also, IDs like "ENSGALT00000005719" are of transcripts, I also did not find a way to solve those (however I am sure I will find after some more digging). Others could not be found even searching manually in the website, which I think are typos or names not related with genes (wrongly selected by my code).
 
+---
+
+## Data visualization
+
+After getting the sequences, I wanted to visualize if there are any distinct clusters of similarity among genes, and to know how similar the sequences of the genes related to vocalization were. Clusters could possibly be related with gene families or simply similarity due to base composition.
+
+Firstly, it is necessary to calculate the genetic distances among sequences. The sequences retrieved from Ensembl are from different genes, and therefore are unalignable. An approach to estimate genetic distances from unalignable sequences is the alignment free clustering, used by the 'Feature Frequency Profile (FFP)' program. The final output is a distance matrix among genes.
+
+The **Final_table.csv** file was too large for the capacities of my computer (consumed all my RAM!), so I had to reduce it. The "shuf" command choses random lines, I chose to run ~50% of the data (5000 lines).
+
+```shell
+shuf -n 5000 Final_table.csv > tab5000.csv # -n is the number of lines you want to choose
+
+# Convert the csv file to a fasta file
+awk 'BEGIN {FS=","} {print ">"$1"\n"$2}' tab5000.csv > seq5000.fasta
+```
+
+Installation of the ffp program:
+
+```shell
+wget 'http://sourceforge.net/projects/ffp-phylogeny/files/ffp-3.19.tar.gz'
+tar -xzf ffp-3.19.tar.gz #extracts the compressed archive
+cd ffp-3.19
+./configure --disable-gui #create system specific configuration files that will be read by the compiler
+make #this is a command compiles the program (it is now executable in the source folder (called src))
+sudo make install #this installs system wide (It can be run from any directory because it is now copied in the root)
+```
+
+Running ffp:
+
+```shell
+ffpry -m -d -l 3 seq5000.fasta | ffpcol -d | ffprwn | ffpjsd > matrix3.txt
+# -m is to do multiple comparisons, -d standard ACTG coding, -l is length of the substring to be compared among sequences. ffpcol, ffprwn, ffpjsd are programs that format the output of others to make a matrix with the genetic distance among genes.
+```
+
+## Multidimensional scaling of the dissimilarity among genes related with vocalization
+
+From the dissimilarity matrix exported by ffp, I used multidimensional scaling to visualize the possible groups among genes. Ggplot does not recognize class structure from the multidimensional scaling function in R (cmdscale), so I installed and used ggfortify. Ggfortify is a supplemental package to ggplot.
+
+```r
+library(ggplot2)
+library(devtools) #required to install packages from github
+install_github('sinhrks/ggfortify')
+library(ggfortify)
+
+tab <- as.matrix(read.table(file="matrix3.txt"))
+
+pc <- cmdscale(tab, eig = TRUE) #perform the multidimensional scaling in the form of a list
+
+autoplot(pc, colour = 'darkgreen', alpha=0.2, size = 4, main = 'Dissimilarities amongst genes', xlab = 'Dimension 1', ylab = 'Dimension 2') #ggfortify function to plot the data
+
+ggsave("mdsplot.png")
+```
+
+<div class="centered">
+<img src="mdsplot.png" width="668">
+
+
+Well, it was not exactly what I was expecting. Here we see only one big cluster of similar genes, while few outliers are quite dissimilar. I expected distinct clusters because of the different gene families involved with vocal learning, as several pathways are necessary for this trait. I did not test different alignment-free distance measures, so maybe others would describe better my data. Due to limitations in my laptop, I was only able to use a short substring length (3) to compare sequences, but longer lengths may show a different pattern. 
