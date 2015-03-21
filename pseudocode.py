@@ -1,4 +1,5 @@
-##My idea is to write a program to build, from three independent lists of genes associated with vocal-learning, one without duplicates and the sequence of each gene. The lists contain approximately 2,700, 500 and 2,000 genes.
+
+###########  All the information I used here is in the report (README.md) ###############################
 
 from pandas import DataFrame, read_csv
 import pandas as pd
