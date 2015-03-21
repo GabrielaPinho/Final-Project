@@ -100,6 +100,13 @@ get_finaltable (allruns, "Final_table")
 
 # Only 46 genes remained without sequences (less than 1%). One example of a gene that didnt work is "ZGC:113518", they call it a synonymous name, and I did not find a way to get the gene ID or symbol from it. Also, IDs like "ENSGALT00000005719" are of transcripts, I also did not find a way to solve those (however I am sure I will find after some more digging). Others could not be found even searching manually in the website, which I think are typos or names not related with genes (wrongly selected by my code).
 
-#To represent graphically my data, I
+
+
+
+
+
+
+
+
 
 
